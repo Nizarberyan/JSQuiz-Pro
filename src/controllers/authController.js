@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');  //bcrypt est une bibliothèque Node.js utilisée pour hachage et vérification sécurisée des mots de passe
-const User = require('../../models');
+const {User} = require('../../models');
 
 const register = async (req, res) => {
   try {
@@ -16,8 +16,8 @@ const register = async (req, res) => {
 
     // Création de l'utilisateur
     const user = await User.create({
-      username,
-      email,
+      name: username,
+      email: email,
       password: hashedPassword
     });
 
@@ -34,11 +34,6 @@ const register = async (req, res) => {
     return res.status(500).json({ message: 'Erreur serveur' });
   }
 };
-
-module.exports = { register };
-
-
-
 
 const showLogin = (req, res) => res.render('auth/login');
 const showRegister = (req, res) => res.render('auth/register');
@@ -74,4 +69,4 @@ const login = async (req, res) => {
   }
 }
 
-module.exports = { showLogin, showRegister, login };
+module.exports = { showLogin, showRegister, login, register };
