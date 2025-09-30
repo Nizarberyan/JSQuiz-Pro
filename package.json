@@ -1,7 +1,7 @@
 {
   "name": "jsquiz-pro",
-  "module": "index.ts",
-  "type": "module",
+  "module": "index.js",
+
   "private": true,
   "devDependencies": {
     "@types/bun": "latest"
