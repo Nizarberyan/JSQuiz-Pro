@@ -2,30 +2,35 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable('Users', {
+        await queryInterface.createTable('Scores', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            name: {
+            score: {
+                type: Sequelize.INTEGER,
+                allowNull: false
+            },
+            theme: {
                 type: Sequelize.STRING,
                 allowNull: false
             },
-            email: {
-                type: Sequelize.STRING,
+            user_id: {
+                type: Sequelize.INTEGER,
                 allowNull: false,
-                unique: true
+                references: {
+                    model: 'Users',
+                    key: 'id'
+                },
+                onUpdate: 'CASCADE',
+                onDelete: 'CASCADE'
             },
-            role: {
-                type: Sequelize.ENUM('admin', 'user'),
+            played_at: {
+                type: Sequelize.DATE,
                 allowNull: false,
-                defaultValue: 'user'
-            },
-            password: {
-                type: Sequelize.STRING,
-                allowNull: false
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
             },
             createdAt: {
                 allowNull: false,
@@ -40,7 +45,6 @@ module.exports = {
         });
     },
     async down(queryInterface) {
-        // You need to drop the ENUM type manually for Postgres
-        await queryInterface.dropTable('Users');
+        await queryInterface.dropTable('Scores');
     }
 };
