@@ -3,25 +3,28 @@
   "module": "index.js",
   "private": true,
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "tailwindcss": "3"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
-    "bcrypt": "^5.1.0",
+    "bcryptjs": "^3.0.2",
     "body-parser": "^1.20.2",
+    "caniuse-lite": "^1.0.30001746",
     "connect-flash": "^0.1.1",
     "dotenv": "^17.2.3",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "express-mysql-session": "^2.1.7",
     "express-session": "^1.17.3",
-    "mysql2": "^3.15.1",
+    "mysql2": "^3.2.0",
     "sequelize": "^6.37.7",
     "sequelize-cli": "^6.6.3"
   },
   "scripts": {
-    "start": "bun --hot server.js"
+    "start": "bun --hot server.js",
+    "build-css": "tailwindcss -i ./public/css/input.css -o ./public/css/output.css --watch"
   }
 }
