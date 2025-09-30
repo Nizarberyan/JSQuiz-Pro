@@ -39,7 +39,7 @@ module.exports = {
             }
         });
     },
-    async down(queryInterface, Sequelize) {
+    async down(queryInterface) {
         // You need to drop the ENUM type manually for Postgres
         await queryInterface.dropTable('Users');
     }
