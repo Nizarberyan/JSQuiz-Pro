@@ -1,18 +1,27 @@
-function insureAuth(req, res, next) {
+function ensureAuth(req, res, next) {
     if (req.session && req.session.user) {
         next()
     } else {
         res.redirect('/auth/login')
     }
 }
-function  insureGuest(req, res, next) {
+function  ensureGuest(req, res, next) {
     if (!req.session || !req.session.user) {
-        res.redirect('/')
-    } else {
+        console.log('guest')
         next()
+    } else {
+        res.redirect('/')
+    }
+}
+function ensureAdmin(req, res, next) {
+    if (req.session && req.session.user && req.session.userRole === 'admin') {
+        next()
+    } else {
+        res.redirect('/')
     }
 }
 module.exports = {
-    insureAuth,
-    insureGuest
+    ensureAuth,
+    ensureGuest,
+    ensureAdmin,
 }

@@ -1,4 +1,5 @@
-const bcrypt = require('bcryptjs');  //bcrypt est une bibliothèque Node.js utilisée pour hachage et vérification sécurisée des mots de passe
+
+const bcrypt = require('bcryptjs'); 3
 const {User} = require('../../models');
 
 const register = async (req, res) => {
@@ -39,6 +40,7 @@ const showLogin = (req, res) => res.render('auth/login');
 const showRegister = (req, res) => res.render('auth/register');
 
 const login = async (req, res) => {
+    console.log(req.body);
   try {
     const { username, password } = req.body;
     const user = await User.findOne({ where: { name: username } });
@@ -55,6 +57,7 @@ const login = async (req, res) => {
     req.session.userRole = user.role;
     req.session.userPassword = user.password;
 
+
     res.json({
       message: 'Login successful',
       session: {
@@ -69,4 +72,16 @@ const login = async (req, res) => {
   }
 }
 
-module.exports = { showLogin, showRegister, login, register };
+function logout(req, res) {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Error destroying session:', err);
+            return res.status(500).send('Error logging out');
+        }
+
+        res.clearCookie('connect.sid'); // I need to Replace 'connect.sid' with my session cookie name
+        res.send('Logged out successfully');
+    });
+}
+
+module.exports = { showLogin, showRegister, login, register, logout };
