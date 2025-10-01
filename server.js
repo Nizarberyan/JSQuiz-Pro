@@ -18,8 +18,8 @@ app.use(session({
 }));
 
 
-app.get('/', (req, res) => {
-    res.render('index');
+app.post('/', (req, res) => {
+    res.json({ message: 'Welcome to JSQuiz-Pro API' });
 });
 
 app.use('/auth', authRoutes);
