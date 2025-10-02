@@ -3,35 +3,10 @@ const { User } = require("../../models");
 const { Question } = require("../../models");
 
 
-// exports.addScore = async (req, res) => {
-
-//     try {
-//     const { theme, score } = req.body;
-//     const userId = req.session.userId; 
-//     if (!userId) return res.status(401).json({ message: "Unauthorized" });
-
-//     const newScore = await Score.create({
-//       user_id: userId,
-//       theme,
-//       score,
-//     });
-
-//     res.status(201).json(newScore);
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// }
 // function to calculate and save score
 exports.calculateScore = async (req, res) => {
     try {
         const { userId, theme, answers } = req.body;
-        /**
-         * userId  → l'id de l'utilisateur
-         * theme   → le thème joué (ex: "math", "science", ...)
-         * answers → un objet/array contenant les réponses de l'utilisateur :
-         *           { questionId: 1, answer: "..." }
-         */
-
         if (!userId || !theme || !answers) {
             return res.status(400).json({
                 success: false,
@@ -106,20 +81,29 @@ exports.calculateScore = async (req, res) => {
     }
 };
 
+exports.checkAnswers = (question, userAnswer) => {
+    // question.correctAnswer peut être une string ou un tableau
+    const correct = question.correctAnswer;
 
-exports.getUserScores = async (req, res) => {
-    try {
-        const userId = req.session.userId;
+    // s'assurer que userAnswer est un tableau pour la comparaison
+    const userAnswers = Array.isArray(userAnswer) ? userAnswer : [userAnswer];
 
+    // comparaison selon le type de correctAnswer
+    if (Array.isArray(correct)) {
+        // tri pour éviter les différences d'ordre
+        const sortedCorrect = correct.slice().sort();
+        const sortedUser = userAnswers.slice().sort();
 
-        const scores = await Score.findAll({
-            where: { user_id: userId },
-            order: [["date", "DESC"]],
-        });
-
-        res.json(scores);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+        // vrai si toutes les réponses correctes sont choisies et aucune en trop
+        return JSON.stringify(sortedCorrect) === JSON.stringify(sortedUser);
+    } else {
+        // simple réponse
+        return correct == userAnswer;
     }
 };
+
+
+
+exports
+
 
