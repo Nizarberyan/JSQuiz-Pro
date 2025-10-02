@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title><%= typeof title !== 'undefined' ? title : 'JSQuiz-Pro' %></title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link href="/css/output.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-slate-800 text-white py-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center px-5">
+            <div class="text-lg font-bold">JSQuiz-Pro</div>
+            <div class="flex space-x-8">
+                <a href="/" class="hover:text-gray-300">Accueil</a>
+                <% if (typeof userId !== 'undefined' && userId) { %>
+                    <a href="/quizzes" class="hover:text-gray-300">Quiz</a>
+                    <a href="/auth/logout" class="hover:text-gray-300">Déconnexion</a>
+                <% } else { %>
+                    <a href="/auth/login" class="hover:text-gray-300">Connexion</a>
+                    <a href="/auth/register" class="hover:text-gray-300">Inscription</a>
+                <% } %>
+            </div>
+        </div>
+    </nav>
