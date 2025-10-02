@@ -4,6 +4,7 @@
   "private": true,
   "devDependencies": {
     "@types/bun": "latest",
+    "prettier": "^3.6.2",
     "tailwindcss": "3"
   },
   "peerDependencies": {
@@ -14,11 +15,13 @@
     "body-parser": "^1.20.2",
     "caniuse-lite": "^1.0.30001746",
     "connect-flash": "^0.1.1",
+    "connect-session-sequelize": "^8.0.2",
     "dotenv": "^17.2.3",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "express-mysql-session": "^2.1.7",
-    "express-session": "^1.17.3",
+    "express-session": "^1.18.2",
+    "multer": "^2.0.2",
     "mysql2": "^3.2.0",
     "sequelize": "^6.37.7",
     "sequelize-cli": "^6.6.3"

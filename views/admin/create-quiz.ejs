@@ -1,44 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Créer un Quiz - JSQuiz-Pro</title>
-    <link href="/css/output.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100">
-    <nav class="bg-slate-800 text-white py-4">
-        <div class="max-w-6xl mx-auto flex justify-between items-center px-5">
-            <div class="text-lg font-bold">JSQuiz-Pro</div>
-            <div class="flex space-x-8">
-                <a href="/" class="hover:text-gray-300">Accueil</a>
-                <a href="/admin/dashboard" class="hover:text-gray-300">Dashboard</a>
-                <a href="/admin/create-quiz" class="hover:text-gray-300">Créer Quiz</a>
-            </div>
-        </div>
-    </nav>
+<%- include('../partials/header', { title: 'Créer un Quiz - JSQuiz-Pro', userId, userRole }) %>
+
+<div class="flex-1">
     
     <div class="max-w-4xl mx-auto mt-10 p-6">
         <div class="bg-white rounded-lg shadow-lg p-8">
             <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Créer un nouveau Quiz</h2>
             
-            <form class="space-y-6">
+            <form method="POST" action="/quizzes/create" enctype="multipart/form-data" class="space-y-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Thématique</label>
-                    <label>
-                        <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
-                            <option>JavaScript</option>
-                            <option>HTML/CSS</option>
-                            <option>React</option>
-                            <option>Node.js</option>
-                        </select>
-                    </label>
+                    <input type="text" name="theme" placeholder="Entrez le thème du quiz (ex: JavaScript, React, Node.js...)"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Image du Quiz (optionnel)</label>
+                    <input type="file" name="quizImage" accept="image/*"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Question</label>
-                    <label>
-<textarea rows="3" placeholder="Entrez votre question..."
-          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"></textarea>
-                    </label>
+                    <textarea name="question" rows="3" placeholder="Entrez votre question..."
+                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required></textarea>
                 </div>
 
                 <div class="space-y-4">
@@ -48,40 +32,32 @@
                         <label>
                             <input type="radio" name="correct" value="0" class="text-green-500">
                         </label>
-                        <label>
-                            <input type="text" placeholder="Option 1" 
-                                   class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
-                        </label>
+                        <input type="text" name="option1" placeholder="Option 1" 
+                               class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
                     </div>
                     
                     <div class="flex items-center space-x-3">
                         <label>
                             <input type="radio" name="correct" value="1" class="text-green-500">
                         </label>
-                        <label>
-                            <input type="text" placeholder="Option 2" 
-                                   class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
-                        </label>
+                        <input type="text" name="option2" placeholder="Option 2" 
+                               class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
                     </div>
                     
                     <div class="flex items-center space-x-3">
                         <label>
                             <input type="radio" name="correct" value="2" class="text-green-500">
                         </label>
-                        <label>
-                            <input type="text" placeholder="Option 3" 
-                                   class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
-                        </label>
+                        <input type="text" name="option3" placeholder="Option 3" 
+                               class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
                     </div>
                     
                     <div class="flex items-center space-x-3">
                         <label>
                             <input type="radio" name="correct" value="3" class="text-green-500">
                         </label>
-                        <label>
-                            <input type="text" placeholder="Option 4" 
-                                   class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
-                        </label>
+                        <input type="text" name="option4" placeholder="Option 4" 
+                               class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
                     </div>
                 </div>
 
@@ -100,5 +76,6 @@
             </form>
         </div>
     </div>
-</body>
-</html>
+</div>
+
+<%- include('../partials/footer') %>
