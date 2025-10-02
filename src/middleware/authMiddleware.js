@@ -12,9 +12,10 @@ function ensureGuest(req, res, next) {
 }
 
 function ensureAdmin(req, res, next) {
-  if (req.session && req.session.user && req.session.userRole === "admin") {
+  if (req.session && req.session.userRole === "admin") {
     next();
   } else {
+    console.log(req.session);
     res.redirect("/");
   }
 }

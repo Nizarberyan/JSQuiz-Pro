@@ -1,5 +1,6 @@
-<%- include('../partials/header', { userId }) %>
+<%- include('../partials/header', { userId, userRole }) %>
 
+<div class="flex-1">
 <div class="container mx-auto px-4 py-8">
   <div class="text-center mb-8">
     <h1 class="text-3xl font-bold mb-4">Choisissez un Thème</h1>
@@ -12,14 +13,36 @@
     </div>
   <% } else { %>
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <% themes.forEach(theme => { %>
+      <% themes.forEach((theme, index) => { %>
         <div class="bg-white border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
           <div class="text-center">
-            <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-            </div>
+            <% if (theme.images && theme.images.length > 0) { %>
+              <div class="relative mb-4" id="slideshow-<%= index %>">
+                <div class="w-full aspect-video bg-gray-200 rounded-lg overflow-hidden">
+                  <% theme.images.forEach((image, imgIndex) => { %>
+                    <img src="<%= image %>" alt="<%= theme.theme %>" 
+                         class="w-full h-full object-cover <%= imgIndex === 0 ? '' : 'hidden' %>" 
+                         data-slide="<%= imgIndex %>">
+                  <% }) %>
+                </div>
+                <% if (theme.images.length > 1) { %>
+                  <button onclick="prevSlide(<%= index %>)" 
+                          class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-1 rounded">
+                    ‹
+                  </button>
+                  <button onclick="nextSlide(<%= index %>)" 
+                          class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-1 rounded">
+                    ›
+                  </button>
+                <% } %>
+              </div>
+            <% } else { %>
+              <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+            <% } %>
             <h3 class="text-xl font-semibold mb-3"><%= theme.theme %></h3>
             <a href="/quizzes/play/<%= encodeURIComponent(theme.theme) %>" 
                class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition">
@@ -31,5 +54,32 @@
     </div>
   <% } %>
 </div>
+</div>
+
+<script>
+  let currentSlides = {};
+  
+  function nextSlide(themeIndex) {
+    const slideshow = document.getElementById(`slideshow-${themeIndex}`);
+    const images = slideshow.querySelectorAll('img');
+    const current = currentSlides[themeIndex] || 0;
+    
+    images[current].classList.add('hidden');
+    const next = (current + 1) % images.length;
+    images[next].classList.remove('hidden');
+    currentSlides[themeIndex] = next;
+  }
+  
+  function prevSlide(themeIndex) {
+    const slideshow = document.getElementById(`slideshow-${themeIndex}`);
+    const images = slideshow.querySelectorAll('img');
+    const current = currentSlides[themeIndex] || 0;
+    
+    images[current].classList.add('hidden');
+    const prev = current === 0 ? images.length - 1 : current - 1;
+    images[prev].classList.remove('hidden');
+    currentSlides[themeIndex] = prev;
+  }
+</script>
 
 <%- include('../partials/footer') %>

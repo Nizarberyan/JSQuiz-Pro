@@ -50,7 +50,7 @@ app.post("/", (req, res) => {
   res.json({ message: "Welcome to JSQuiz-Pro API" });
 });
 app.get("/", (req, res) => {
-  res.render("index", { userId: req.session.userId });
+  res.render("index", { userId: req.session.userId, userRole: req.session.userRole });
 });
 app.use("/auth", authRoutes);
 app.use("/quizzes", quizRoutes);

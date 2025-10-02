@@ -21,16 +21,24 @@ const register = async (req, res) => {
 
     req.session.userId = user.id;
     req.session.userRole = user.role;
-    
-    res.redirect('/');
+
+    res.redirect("/");
   } catch (error) {
     console.error(error);
     res.render("auth/register", { error: "Erreur serveur" });
   }
 };
 
-const showLogin = (req, res) => res.render("auth/login", { userId: req.session.userId });
-const showRegister = (req, res) => res.render("auth/register", { userId: req.session.userId });
+const showLogin = (req, res) =>
+  res.render("auth/login", {
+    userId: req.session.userId,
+    userRole: req.session.userRole,
+  });
+const showRegister = (req, res) =>
+  res.render("auth/register", {
+    userId: req.session.userId,
+    userRole: req.session.userRole,
+  });
 
 const login = async (req, res) => {
   try {
@@ -45,8 +53,8 @@ const login = async (req, res) => {
     }
     req.session.userId = user.id;
     req.session.userRole = user.role;
-    
-    res.redirect('/');
+
+    res.redirect("/");
   } catch (err) {
     console.error(err);
     res.render("auth/login", { error: "Something went wrong" });
@@ -54,15 +62,16 @@ const login = async (req, res) => {
 };
 
 function logout(req, res) {
-  req.session.destroy((err) => {
-    if (err) {
-      console.error("Error destroying session:", err);
-      return res.status(500).send("Error logging out");
-    }
-
-    res.clearCookie("connect.sid"); // I need to Replace 'connect.sid' with my session cookie name
-    res.send("Logged out successfully");
-  });
+  if (req.session) {
+    req.session.destroy((err) => {
+      if (err) {
+        console.error("Error destroying session:", err);
+        res.status(500).send("Internal Server Error");
+      } else {
+        res.redirect("/");
+      }
+    });
+  }
 }
 
 module.exports = { showLogin, showRegister, login, register, logout };
