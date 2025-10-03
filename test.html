@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSQuiz-Pro Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+  <!-- Navbar -->
+  <nav class="bg-gray-900 text-white px-6 py-3 flex justify-between items-center">
+    <div class="font-bold text-lg">JSQuiz-Pro</div>
+    <ul class="flex space-x-6">
+      <li><a href="#" class="hover:text-gray-300">Accueil</a></li>
+      <li><a href="#" class="hover:text-gray-300">Quiz</a></li>
+      <li><a href="#" class="hover:text-gray-300">Déconnexion (user)</a></li>
+    </ul>
+  </nav>
+
+  <div class="container mx-auto px-6 py-10">
+
+    <!-- Statistiques -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      <div class="bg-gradient-to-r from-indigo-400 to-purple-500 text-white rounded-lg shadow p-6 text-center">
+        <p class="text-4xl font-bold">24</p>
+        <p class="mt-2">Parties jouées</p>
+      </div>
+      <div class="bg-gradient-to-r from-green-400 to-teal-500 text-white rounded-lg shadow p-6 text-center">
+        <p class="text-4xl font-bold">87.5%</p>
+        <p class="mt-2">Score moyen</p>
+      </div>
+      <div class="bg-gradient-to-r from-orange-400 to-red-500 text-white rounded-lg shadow p-6 text-center">
+        <p class="text-4xl font-bold">95%</p>
+        <p class="mt-2">Meilleur score</p>
+      </div>
+    </div>
+
+    <!-- Badges -->
+    <div class="bg-white rounded-lg shadow p-6 mb-10">
+      <h2 class="text-lg font-semibold mb-4">Mes Badges</h2>
+      <div class="flex flex-wrap gap-3">
+        <span class="px-4 py-1 bg-green-500 text-white rounded-full text-sm">🏆 Débutant</span>
+        <span class="px-4 py-1 bg-blue-500 text-white rounded-full text-sm">🎮 Joueur Régulier</span>
+        <span class="px-4 py-1 bg-purple-500 text-white rounded-full text-sm">⚡ Expert JavaScript</span>
+        <span class="px-4 py-1 bg-yellow-400 text-white rounded-full text-sm">✨ Perfectionniste</span>
+      </div>
+    </div>
+
+    <!-- Classement -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-lg font-semibold mb-4">Classement Global</h2>
+      <div class="divide-y">
+        <div class="flex justify-between items-center bg-yellow-300 px-4 py-2 rounded-t-lg font-medium">
+          <span>🥇 Alice Martin</span>
+          <span>92.3%</span>
+        </div>
+        <div class="flex justify-between items-center bg-gray-300 px-4 py-2 font-medium">
+          <span>🥈 Bob Dupont</span>
+          <span>89.7%</span>
+        </div>
+        <div class="flex justify-between items-center bg-orange-300 px-4 py-2 font-medium">
+          <span>🥉 Claire Durand</span>
+          <span>87.5%</span>
+        </div>
+        <div class="flex justify-between items-center px-4 py-2">
+          <span>4. David Chen</span>
+          <span>85.2%</span>
+        </div>
+        <div class="flex justify-between items-center px-4 py-2 rounded-b-lg">
+          <span>5. Emma Wilson</span>
+          <span>83.8%</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
