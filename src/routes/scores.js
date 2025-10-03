@@ -7,7 +7,6 @@ const scoreController = require('../controllers/scoreController');
 // router.use(authMiddleware.ensureAuth);
 
 router.post('/calculate', scoreController.calculateScore);
-
-
+router.get('/me', scoreController.getMyScores);
 
 module.exports = router;

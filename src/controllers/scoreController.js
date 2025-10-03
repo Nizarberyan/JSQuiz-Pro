@@ -81,29 +81,70 @@ exports.calculateScore = async (req, res) => {
     }
 };
 
-exports.checkAnswers = (question, userAnswer) => {
-    // question.correctAnswer peut être une string ou un tableau
-    const correct = question.correctAnswer;
+// exports.checkAnswers = (question, userAnswer) => {
+//     // question.correctAnswer peut être une string ou un tableau
+//     const correct = question.correctAnswer;
 
-    // s'assurer que userAnswer est un tableau pour la comparaison
-    const userAnswers = Array.isArray(userAnswer) ? userAnswer : [userAnswer];
+//     // s'assurer que userAnswer est un tableau pour la comparaison
+//     const userAnswers = Array.isArray(userAnswer) ? userAnswer : [userAnswer];
 
-    // comparaison selon le type de correctAnswer
-    if (Array.isArray(correct)) {
-        // tri pour éviter les différences d'ordre
-        const sortedCorrect = correct.slice().sort();
-        const sortedUser = userAnswers.slice().sort();
+//     // comparaison selon le type de correctAnswer
+//     if (Array.isArray(correct)) {
+//         // tri pour éviter les différences d'ordre
+//         const sortedCorrect = correct.slice().sort();
+//         const sortedUser = userAnswers.slice().sort();
 
-        // vrai si toutes les réponses correctes sont choisies et aucune en trop
-        return JSON.stringify(sortedCorrect) === JSON.stringify(sortedUser);
-    } else {
-        // simple réponse
-        return correct == userAnswer;
+//         // vrai si toutes les réponses correctes sont choisies et aucune en trop
+//         return JSON.stringify(sortedCorrect) === JSON.stringify(sortedUser);
+//     } else {
+//         // simple réponse
+//         return correct == userAnswer;
+//     }
+// };
+
+
+exports.getMyScores = async (req, res) => {
+    try {
+        // on récupère l'utilisateur depuis la session (ou token JWT si tu utilises auth)
+        const userId = req.session.userId || req.user?.id;
+
+        if (!userId) {
+            return res.status(401).json({
+                success: false,
+                message: "User not authenticated"
+            });
+        }
+
+        // Vérifier que l'utilisateur existe
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        // Récupérer les scores de l'utilisateur avec Sequelize
+        const scores = await Score.findAll({
+            where: { user_id: userId },
+            attributes: ["score", "theme", "played_at"], // colonnes à renvoyer
+            order: [["played_at", "DESC"]] // plus récent d'abord
+        });
+
+        res.json({
+            success: true,
+            message: "Scores fetched successfully",
+            count: scores.length,
+            data: scores
+        });
+
+    } catch (err) {
+        console.error("Error fetching scores:", err);
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch scores"
+        });
     }
 };
-
-
-
-exports
 
 
