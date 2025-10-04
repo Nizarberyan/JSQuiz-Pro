@@ -16,5 +16,13 @@ router.post(
   questionController.upload.single("quizImage"),
   questionController.createQuestion,
 );
+router.post(
+  "/create-multiple",
+  questionController.upload.single("quizImage"),
+  questionController.createMultipleQuestions,
+);
+
+router.get("/play/:theme", questionController.playQuiz);
+router.post("/submit", questionController.submitQuiz);
 
 module.exports = router;
