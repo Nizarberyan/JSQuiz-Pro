@@ -15,7 +15,7 @@ const store = new SequelizeStore({
   checkExpirationInterval: 15 * 60 * 1000,
   expiration: 7 * 24 * 60 * 60 * 1000,
 });
-
+//syncs the session table with the database
 store
   .sync()
   .then(() => {
@@ -50,7 +50,10 @@ app.post("/", (req, res) => {
   res.json({ message: "Welcome to JSQuiz-Pro API" });
 });
 app.get("/", (req, res) => {
-  res.render("index", { userId: req.session.userId, userRole: req.session.userRole });
+  res.render("index", {
+    userId: req.session.userId,
+    userRole: req.session.userRole,
+  });
 });
 app.use("/auth", authRoutes);
 app.use("/quizzes", quizRoutes);
