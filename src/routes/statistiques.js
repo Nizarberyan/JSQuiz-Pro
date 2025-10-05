@@ -5,3 +5,4 @@ const statistiqueController = require("../controllers/statistiquesController");
 router.get("/dashboard", statistiqueController.getUserDashboard);
 
 module.exports = router;
+

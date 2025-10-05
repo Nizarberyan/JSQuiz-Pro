@@ -23,6 +23,13 @@ exports.getUserDashboard = async (req, res) => {
 
     const totalGames = await Score.count({ where: { user_id: userId } });
 
+    // Meilleur score
+    const bestScoreResult = await Score.findOne({
+      attributes: [[Sequelize.fn("MAX", Sequelize.col("score")), "best_score"]],
+      where: { user_id: userId },
+      raw: true
+    });
+
     const history = await Score.findAll({
       attributes: ["theme", "score", "played_at"],
       where: { user_id: userId },
@@ -38,20 +45,46 @@ exports.getUserDashboard = async (req, res) => {
       raw: true
     });
 
+    // Classement global (top 10 joueurs)
+    const topPlayers = await Score.findAll({
+      attributes: [
+        "user_id",
+        [Sequelize.fn("AVG", Sequelize.col("score")), "avg_score"]
+      ],
+      include: [{
+        model: User,
+        attributes: ["name"]
+      }],
+      group: ["user_id", "User.id", "User.name"],
+      order: [[Sequelize.literal("avg_score"), "DESC"]],
+      limit: 10,
+      raw: false
+    });
+
     // Badge
     let badge = "Débutant";
-    if (totalGames >= 10 && avgScore.avg_score >= 80) badge = "Expert";
-    else if (avgScore.avg_score >= 50) badge = "Intermédiaire";
+    const avgScoreValue = Number(avgScore.avg_score || 0);
+    if (totalGames >= 10 && avgScoreValue >= 80) badge = "Expert";
+    else if (avgScoreValue >= 50) badge = "Intermédiaire";
 
-    res.json({
-      success: true,
+    // Rendre la vue EJS
+    res.render("user/dashboard", {
+      user: {
+        name: user.name,
+        email: user.email
+      },
       stats: {
-        avgScore: Number(avgScore.avg_score || 0).toFixed(2),
+        avgScore: avgScoreValue.toFixed(2),
+        bestScore: Number(bestScoreResult?.best_score || 0).toFixed(2),
         totalGames,
         history,
         repartition,
         badge
-      }
+      },
+      topPlayers: topPlayers.map(p => ({
+        User: { name: p.User.name },
+        avg_score: p.dataValues.avg_score
+      }))
     });
 
   } catch (err) {
