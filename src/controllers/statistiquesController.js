@@ -45,7 +45,7 @@ exports.getUserDashboard = async (req, res) => {
       raw: true
     });
 
-    // Classement global (top 10 joueurs)
+    // Classement global (top 10 joueurs) - VERSION CORRIGÉE
     const topPlayers = await Score.findAll({
       attributes: [
         "user_id",
@@ -53,9 +53,10 @@ exports.getUserDashboard = async (req, res) => {
       ],
       include: [{
         model: User,
+        as: "user", // ⚠️ Utilisez l'alias défini dans le modèle Score
         attributes: ["name"]
       }],
-      group: ["user_id", "User.id", "User.name"],
+      group: ["user_id", "user.id", "user.name"], // ⚠️ Utilisez l'alias ici aussi
       order: [[Sequelize.literal("avg_score"), "DESC"]],
       limit: 10,
       raw: false
@@ -63,7 +64,7 @@ exports.getUserDashboard = async (req, res) => {
 
     // Badge
     let badge = "Débutant";
-    const avgScoreValue = Number(avgScore.avg_score || 0);
+    const avgScoreValue = Number(avgScore?.avg_score || 0);
     if (totalGames >= 10 && avgScoreValue >= 80) badge = "Expert";
     else if (avgScoreValue >= 50) badge = "Intermédiaire";
 
@@ -82,13 +83,14 @@ exports.getUserDashboard = async (req, res) => {
         badge
       },
       topPlayers: topPlayers.map(p => ({
-        User: { name: p.User.name },
-        avg_score: p.dataValues.avg_score
+        User: { name: p.user?.name || "Unknown" }, // ⚠️ Utilisez p.user (minuscule)
+        avg_score: Number(p.dataValues.avg_score).toFixed(2)
       }))
     });
 
   } catch (err) {
     console.error("Error fetching stats:", err);
+    console.error("Full error details:", err.message, err.stack); // Plus de détails
     res.status(500).json({ success: false, message: "Failed to fetch stats" });
   }
 };

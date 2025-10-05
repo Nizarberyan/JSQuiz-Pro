@@ -23,7 +23,7 @@ const register = async (req, res) => {
     req.session.userRole = user.role;
 
 if (user.role === "user") {
-   res.redirect("/auth/dashboard"); 
+   res.redirect("/dashboard"); 
 } else {
    res.redirect("/");
 }

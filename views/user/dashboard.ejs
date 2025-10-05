@@ -1,53 +1,58 @@
 <%- include('../partials/header', { title: 'Dashboard - JSQuiz-Pro' }) %>
+
 <div class="container mx-auto px-6 py-10">
-    <!-- Statistiques -->
-    <h2></h2>
+    <!-- Nom de l'utilisateur -->
+    <h2 class="text-2xl font-bold mb-6 text-gray-700">
+        Bonjour, <%= user.name %> 👋
+    </h2>
+
+    <!-- Statistiques principales -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-      <div class="bg-gradient-to-r from-indigo-400 to-purple-500 text-white rounded-lg shadow p-6 text-center">
-        <p class="text-4xl font-bold"><%= stats.totalGames %></p>
-        <p class="mt-2">Parties jouées</p>
-      </div>
-      <div class="bg-gradient-to-r from-green-400 to-teal-500 text-white rounded-lg shadow p-6 text-center">
-        <p class="text-4xl font-bold"><%= stats.avgScore %>%</p>
-        <p class="mt-2">Score moyen</p>
-      </div>
-      <div class="bg-gradient-to-r from-orange-400 to-red-500 text-white rounded-lg shadow p-6 text-center">
-        <p class="text-4xl font-bold"><%= stats.bestScore %>%</p>
-        <p class="mt-2">Meilleur score</p>
-      </div>
+        <div class="bg-gradient-to-r from-indigo-400 to-purple-500 text-white rounded-lg shadow p-6 text-center">
+            <p class="text-4xl font-bold"><%= stats.totalGames %></p>
+            <p class="mt-2">Parties jouées</p>
+        </div>
+        <div class="bg-gradient-to-r from-green-400 to-teal-500 text-white rounded-lg shadow p-6 text-center">
+            <p class="text-4xl font-bold"><%= stats.avgScore %>%</p>
+            <p class="mt-2">Score moyen</p>
+        </div>
+        <div class="bg-gradient-to-r from-orange-400 to-red-500 text-white rounded-lg shadow p-6 text-center">
+            <p class="text-4xl font-bold"><%= stats.bestScore %>%</p>
+            <p class="mt-2">Meilleur score</p>
+        </div>
     </div>
 
-    <!-- Badges (exemple simple) -->
+    <!-- Badges -->
     <div class="bg-white rounded-lg shadow p-6 mb-10">
-      <h2 class="text-lg font-semibold mb-4">Mes Badges</h2>
-      <div class="flex flex-wrap gap-3">
-        <% if (stats.totalGames < 5) { %>
-          <span class="px-4 py-1 bg-green-500 text-white rounded-full text-sm">🏆 Débutant</span>
-        <% } %>
-        <% if (stats.avgScore >= 50) { %>
-          <span class="px-4 py-1 bg-blue-500 text-white rounded-full text-sm">🎮 Joueur Régulier</span>
-        <% } %>
-        <% if (stats.avgScore >= 80) { %>
-          <span class="px-4 py-1 bg-purple-500 text-white rounded-full text-sm">⚡ Expert JavaScript</span>
-        <% } %>
-      </div>
+        <h2 class="text-lg font-semibold mb-4">Mes Badges</h2>
+        <div class="flex flex-wrap gap-3">
+            <% if (stats.totalGames < 5) { %>
+                <span class="px-4 py-1 bg-green-500 text-white rounded-full text-sm">🏆 Débutant</span>
+            <% } %>
+            <% if (stats.avgScore >= 50) { %>
+                <span class="px-4 py-1 bg-blue-500 text-white rounded-full text-sm">🎮 Joueur Régulier</span>
+            <% } %>
+            <% if (stats.avgScore >= 80) { %>
+                <span class="px-4 py-1 bg-purple-500 text-white rounded-full text-sm">⚡ Expert JavaScript</span>
+            <% } %>
+        </div>
     </div>
 
-    <!-- Classement -->
+    <!-- Classement Global -->
     <div class="bg-white rounded-lg shadow p-6">
-      <h2 class="text-lg font-semibold mb-4">Classement Global</h2>
-      <div class="divide-y">
-        <% topPlayers.forEach((player, index) => { %>
-          <div class="flex justify-between items-center px-4 py-2 <%= index === 0 ? 'bg-yellow-300' : index === 1 ? 'bg-gray-300' : index === 2 ? 'bg-orange-300' : '' %> font-medium">
-            <span>
-              <%= index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : (index+1) + "." %> 
-              <%= player.User.name %>
-            </span>
-            <span><%= Number(player.avg_score).toFixed(2) %>%</span>
-          </div>
-        <% }) %>
-      </div>
+        <h2 class="text-lg font-semibold mb-4">Classement Global</h2>
+        <div class="divide-y">
+            <% topPlayers.forEach((player, index) => { %>
+                <div class="flex justify-between items-center px-4 py-2 <%= index === 0 ? 'bg-yellow-300' : index === 1 ? 'bg-gray-300' : index === 2 ? 'bg-orange-300' : '' %> font-medium">
+                    <span>
+                        <%= index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : (index+1) + "." %> 
+                        <%= player.User.name %>
+                    </span>
+                    <span><%= Number(player.avg_score).toFixed(2) %>%</span>
+                </div>
+            <% }) %>
+        </div>
     </div>
-
 </div>
+
 <%- include('../partials/footer') %>

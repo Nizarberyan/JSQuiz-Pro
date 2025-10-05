@@ -7,6 +7,8 @@ const { sequelize } = require("./models");
 const authRoutes = require("./src/routes/auth");
 const quizRoutes = require("./src/routes/quizzes");
 const scoreRoutes = require("./src/routes/scores");
+const statistiquesRoutes = require('./src/routes/statistiques');
+
 
 const app = express();
 
@@ -55,6 +57,7 @@ app.get("/", (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/quizzes", quizRoutes);
 app.use("/scores", scoreRoutes);
+app.use("/", statistiquesRoutes);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

@@ -17,7 +17,5 @@ router.get("/register", authController.showRegister);
 router.get("/logout", authController.logout);
 router.post("/logout", authController.logout);
 
-router.get("/dashboard", (req, res) => {
-  res.render("user/dashboard"); 
-});
+
 module.exports = router;
