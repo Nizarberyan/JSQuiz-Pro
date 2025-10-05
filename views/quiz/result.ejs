@@ -1,0 +1,63 @@
+<%- include('../partials/header', { title: 'Résultats - ' + theme, userId, userRole }) %>
+
+<div class="flex-1">
+    <div class="max-w-4xl mx-auto mt-10 p-6">
+        <div class="bg-white rounded-lg shadow-lg p-8">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-4">Résultats du Quiz</h1>
+                <h2 class="text-xl text-gray-600 mb-6">Thème: <%= theme %></h2>
+                
+                <div class="bg-blue-100 rounded-lg p-6 mb-6">
+                    <div class="text-4xl font-bold text-blue-600 mb-2">
+                        <%= score %>/<%= total %>
+                    </div>
+                    <div class="text-lg text-gray-700">
+                        Score: <%= Math.round((score/total) * 100) %>%
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Détails des réponses:</h3>
+                
+                <% results.forEach((result, index) => { %>
+                    <div class="border border-gray-200 rounded-lg p-4 <%= result.isCorrect ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200' %>">
+                        <div class="flex items-start justify-between mb-3">
+                            <h4 class="font-medium text-gray-800">Question <%= index + 1 %>:</h4>
+                            <span class="<%= result.isCorrect ? 'text-green-600' : 'text-red-600' %> font-semibold">
+                                <%= result.isCorrect ? '✓ Correct' : '✗ Incorrect' %>
+                            </span>
+                        </div>
+                        
+                        <p class="text-gray-700 mb-3"><%= result.question %></p>
+                        
+                        <div class="space-y-2">
+                            <% result.options.forEach((option, optionIndex) => { %>
+                                <div class="flex items-center p-2 rounded 
+                                    <%= optionIndex === result.correctAnswer ? 'bg-green-100 text-green-800' : '' %>
+                                    <%= optionIndex === result.userAnswer && optionIndex !== result.correctAnswer ? 'bg-red-100 text-red-800' : '' %>">
+                                    <span class="mr-2">
+                                        <%= optionIndex === result.userAnswer ? '👤' : '' %>
+                                        <%= optionIndex === result.correctAnswer ? '✓' : '' %>
+                                    </span>
+                                    <%= option %>
+                                </div>
+                            <% }) %>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+
+            <div class="text-center mt-8 space-x-4">
+                <a href="/quizzes" class="bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-lg font-medium">
+                    Choisir un autre quiz
+                </a>
+                <a href="/quizzes/play/<%= encodeURIComponent(theme) %>" class="bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-lg font-medium">
+                    Rejouer ce quiz
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

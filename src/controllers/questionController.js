@@ -81,6 +81,83 @@ async function createQuestion(req, res) {
   }
 }
 
+async function createMultipleQuestions(req, res) {
+  if (req.session.userRole !== "admin") {
+    return res.redirect("/");
+  }
+  
+  try {
+    const { theme, questions } = req.body;
+    
+    if (req.file) {
+      const imagePath = `/images/quizzes/${req.file.filename}`;
+      await Image.create({ theme, imagePath });
+    }
+    
+    const questionPromises = Object.values(questions).map(q => 
+      Question.create({
+        theme,
+        question: q.question,
+        options: [q.option1, q.option2, q.option3, q.option4],
+        correctAnswer: [parseInt(q.correct)]
+      })
+    );
+    
+    await Promise.all(questionPromises);
+    res.redirect("/quizzes");
+  } catch (error) {
+    console.error(error);
+    res.render("admin/create-quiz", {
+      userId: req.session.userId,
+      userRole: req.session.userRole,
+      error: "Erreur lors de la création des questions"
+    });
+  }
+}
+
+async function playQuiz(req, res) {
+  try {
+    const { theme } = req.params;
+    const questions = await Question.findAll({
+      where: { theme: decodeURIComponent(theme) },
+      order: [['id', 'ASC']]
+    });
+    
+    if (questions.length === 0) {
+      return res.redirect('/quizzes');
+    }
+    
+    res.render('quiz/play', {
+      theme: decodeURIComponent(theme),
+      questions,
+      userId: req.session.userId,
+      userRole: req.session.userRole
+    });
+  } catch (error) {
+    console.error(error);
+    res.redirect('/quizzes');
+  }
+}
+
+async function submitQuiz(req, res) {
+  try {
+    const { theme, answers, score } = req.body;
+    
+    const { Score } = require('../../models');
+    await Score.create({
+      score,
+      theme,
+      user_id: req.session.userId,
+      played_at: new Date()
+    });
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false });
+  }
+}
+
 function showCreateForm(req, res) {
   res.render("admin/create-quiz", {
     userId: req.session.userId,
@@ -90,4 +167,4 @@ function showCreateForm(req, res) {
 
 function showQuestion(req, res) {}
 
-module.exports = { index, showCreateForm, createQuestion, upload };
+module.exports = { index, showCreateForm, createQuestion, createMultipleQuestions, playQuiz, submitQuiz, upload };
