@@ -23,6 +23,7 @@ router.post(
 );
 
 router.get("/play/:theme", questionController.playQuiz);
+router.post("/validate-answer", questionController.validateAnswer);
 router.post("/submit", questionController.submitQuiz);
 
 module.exports = router;

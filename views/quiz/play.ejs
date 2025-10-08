@@ -75,9 +75,7 @@ function showQuestion(index) {
     document.getElementById('next-btn').textContent = isLast ? 'Finish Quiz' : 'Next Question';
 }
 
-function showFeedback() {
-    const question = quiz.questions[quiz.currentQuestion];
-    const correctAnswer = question.correctAnswer[0];
+function showFeedback(correctAnswer) {
     const labels = document.querySelectorAll('.option-label');
     
     labels.forEach((label, index) => {
@@ -92,7 +90,7 @@ function showFeedback() {
     });
 }
 
-function nextQuestion() {
+async function nextQuestion() {
     const selected = document.querySelector('input[name="option"]:checked');
     if (!selected) {
         alert('Please select an answer!');
@@ -100,26 +98,43 @@ function nextQuestion() {
     }
     
     const userAnswer = parseInt(selected.value);
-    const correctAnswer = quiz.questions[quiz.currentQuestion].correctAnswer[0];
+    const questionId = quiz.questions[quiz.currentQuestion].id;
     
-    quiz.userAnswers[quiz.currentQuestion] = userAnswer;
-    if (userAnswer === correctAnswer) {
-        quiz.score++;
-        document.getElementById('score').textContent = quiz.score;
-    }
-    
-    showFeedback();
     document.getElementById('next-btn').disabled = true;
     
-    setTimeout(() => {
-        if (quiz.currentQuestion === quiz.questions.length - 1) {
-            finishQuiz();
-        } else {
-            quiz.currentQuestion++;
-            showQuestion(quiz.currentQuestion);
-            document.getElementById('next-btn').disabled = false;
+    try {
+        const response = await fetch('/quizzes/validate-answer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ questionId, answer: userAnswer })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            quiz.userAnswers[quiz.currentQuestion] = userAnswer;
+            if (result.isCorrect) {
+                quiz.score++;
+                document.getElementById('score').textContent = quiz.score;
+            }
+            
+            showFeedback(result.correctAnswer);
+            
+            setTimeout(() => {
+                if (quiz.currentQuestion === quiz.questions.length - 1) {
+                    finishQuiz();
+                } else {
+                    quiz.currentQuestion++;
+                    showQuestion(quiz.currentQuestion);
+                    document.getElementById('next-btn').disabled = false;
+                }
+            }, 1500);
         }
-    }, 1500);
+    } catch (error) {
+        console.error('Error validating answer:', error);
+        alert('Error validating answer. Please try again.');
+        document.getElementById('next-btn').disabled = false;
+    }
 }
 
 function finishQuiz() {

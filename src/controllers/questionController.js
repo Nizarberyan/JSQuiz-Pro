@@ -127,15 +127,42 @@ async function playQuiz(req, res) {
       return res.redirect('/quizzes');
     }
     
+    const questionsWithoutAnswers = questions.map(q => ({
+      id: q.id,
+      question: q.question,
+      options: q.options
+    }));
+    
     res.render('quiz/play', {
       theme: decodeURIComponent(theme),
-      questions,
+      questions: questionsWithoutAnswers,
       userId: req.session.userId,
       userRole: req.session.userRole
     });
   } catch (error) {
     console.error(error);
     res.redirect('/quizzes');
+  }
+}
+
+async function validateAnswer(req, res) {
+  try {
+    const { questionId, answer } = req.body;
+    const question = await Question.findByPk(questionId);
+    
+    if (!question) {
+      return res.json({ success: false, error: 'Question not found' });
+    }
+    
+    const isCorrect = question.correctAnswer[0] === answer;
+    res.json({ 
+      success: true, 
+      isCorrect,
+      correctAnswer: question.correctAnswer[0]
+    });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, error: 'Validation failed' });
   }
 }
 
@@ -167,4 +194,4 @@ function showCreateForm(req, res) {
 
 function showQuestion(req, res) {}
 
-module.exports = { index, showCreateForm, createQuestion, createMultipleQuestions, playQuiz, submitQuiz, upload };
+module.exports = { index, showCreateForm, createQuestion, createMultipleQuestions, playQuiz, validateAnswer, submitQuiz, upload };
