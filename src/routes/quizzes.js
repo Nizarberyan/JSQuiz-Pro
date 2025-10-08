@@ -10,17 +10,13 @@ router.use(["/create"], authMiddleware.ensureAdmin);
 
 router.get("/", questionController.index);
 
-router.get("/create", questionController.showCreateForm);
-router.post(
-  "/create",
-  questionController.upload.single("quizImage"),
-  questionController.createQuestion,
-);
 router.post(
   "/create-multiple",
+  authMiddleware.ensureAdmin,
   questionController.upload.single("quizImage"),
   questionController.createMultipleQuestions,
 );
+router.post("/delete/:id", authMiddleware.ensureAdmin, questionController.deleteQuestion);
 
 router.get("/play/:theme", questionController.playQuiz);
 router.post("/validate-answer", questionController.validateAnswer);

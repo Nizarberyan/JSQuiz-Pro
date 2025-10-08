@@ -56,16 +56,17 @@ const quiz = {
 function showQuestion(index) {
     const question = quiz.questions[index];
     document.getElementById('current-q').textContent = index + 1;
-    document.getElementById('question-text').textContent = question.question;
+    document.getElementById('question-text').textContent = question.question + (question.isMultiple ? ' (Multiple answers)' : '');
     
     const container = document.getElementById('options-container');
     container.innerHTML = '';
     
+    const inputType = question.isMultiple ? 'checkbox' : 'radio';
     question.options.forEach((option, optionIndex) => {
         const label = document.createElement('label');
         label.className = 'flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer option-label';
         label.innerHTML = `
-            <input type="radio" name="option" value="${optionIndex}" class="mr-3 text-blue-500">
+            <input type="${inputType}" name="option" value="${optionIndex}" class="mr-3 text-blue-500">
             <span>${option}</span>
         `;
         container.appendChild(label);
@@ -77,12 +78,13 @@ function showQuestion(index) {
 
 function showFeedback(correctAnswer) {
     const labels = document.querySelectorAll('.option-label');
+    const correctAnswers = Array.isArray(correctAnswer) ? correctAnswer : [correctAnswer];
     
     labels.forEach((label, index) => {
         const input = label.querySelector('input');
         input.disabled = true;
         
-        if (index === correctAnswer) {
+        if (correctAnswers.includes(index)) {
             label.classList.add('bg-green-100', 'border-green-500', 'text-green-800');
         } else if (input.checked) {
             label.classList.add('bg-red-100', 'border-red-500', 'text-red-800');
@@ -91,13 +93,13 @@ function showFeedback(correctAnswer) {
 }
 
 async function nextQuestion() {
-    const selected = document.querySelector('input[name="option"]:checked');
-    if (!selected) {
+    const selected = document.querySelectorAll('input[name="option"]:checked');
+    if (selected.length === 0) {
         alert('Please select an answer!');
         return;
     }
     
-    const userAnswer = parseInt(selected.value);
+    const userAnswer = selected.length === 1 ? parseInt(selected[0].value) : Array.from(selected).map(s => parseInt(s.value));
     const questionId = quiz.questions[quiz.currentQuestion].id;
     
     document.getElementById('next-btn').disabled = true;

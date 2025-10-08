@@ -8,6 +8,7 @@ const authRoutes = require("./src/routes/auth");
 const quizRoutes = require("./src/routes/quizzes");
 const scoreRoutes = require("./src/routes/scores");
 const statistiquesRoutes = require('./src/routes/statistiques');
+const adminRoutes = require('./src/routes/admin');
 
 
 const app = express();
@@ -61,6 +62,7 @@ app.use("/auth", authRoutes);
 app.use("/quizzes", quizRoutes);
 app.use("/scores", scoreRoutes);
 app.use("/", statistiquesRoutes);
+app.use("/admin", adminRoutes);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

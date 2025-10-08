@@ -13,8 +13,10 @@
                 <a href="/" class="hover:text-gray-300">Accueil</a>
                 <% if (typeof userId !== 'undefined' && userId) { %>
                     <a href="/quizzes" class="hover:text-gray-300">Quiz</a>
+                    <a href="/dashboard" class="hover:text-gray-300">Dashboard</a>
+                    <a href="/scores/history" class="hover:text-gray-300">History</a>
                     <% if (typeof userRole !== 'undefined' && userRole === 'admin') { %>
-                        <a href="/quizzes/create" class="hover:text-gray-300">Créer Quiz</a>
+                        <a href="/admin" class="hover:text-gray-300">Admin</a>
                     <% } %>
                     <a href="/auth/logout" class="hover:text-gray-300">Déconnexion</a>
                 <% } else { %>

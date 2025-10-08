@@ -1,0 +1,319 @@
+<%- include('../partials/header', { title: 'Admin Dashboard', userId, userRole }) %>
+
+<div class="flex-1 min-h-screen bg-gray-50">
+    <div class="max-w-7xl mx-auto mt-12 px-4 sm:px-6 lg:px-8">
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-8 text-center">Admin Dashboard</h1>
+
+        <!-- User Scores Section -->
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
+            <header class="flex items-center justify-between gap-4 pb-4 border-b">
+                <div class="flex items-center gap-3">
+                    <span class="inline-flex items-center justify-center h-10 w-10 rounded-lg bg-purple-50 text-purple-600">
+                        <i class="fa-solid fa-chart-bar"></i>
+                    </span>
+                    <div>
+                        <h2 class="text-2xl font-semibold text-gray-800">User Scores</h2>
+                        <p class="text-sm text-gray-500">Recent quiz results from all users</p>
+                    </div>
+                </div>
+                <div class="text-sm text-gray-600">
+                    <strong class="text-gray-800"><%= allScores.length %></strong> total scores
+                </div>
+            </header>
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                <% allScores.slice(0, 15).forEach(s => { %>
+                    <div class="border border-gray-200 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition">
+                        <div class="flex justify-between items-center">
+                            <div class="min-w-0">
+                                <p class="font-semibold text-gray-800 truncate"><%= s.user?.name || 'Unknown' %></p>
+                                <p class="text-sm text-gray-600 truncate"><%= s.theme %></p>
+                            </div>
+                            <p class="text-xl font-bold text-blue-600 ml-2"><%= s.score %></p>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Create New Quiz -->
+            <section class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                <header class="flex items-start justify-between gap-4 pb-4 border-b">
+                    <div class="flex items-center gap-3">
+            <span class="inline-flex items-center justify-center h-10 w-10 rounded-lg bg-green-50 text-green-600">
+              <i class="fa-solid fa-plus"></i>
+            </span>
+                        <div>
+                            <h2 class="text-2xl font-semibold text-gray-800">Create New Quiz</h2>
+                            <p class="text-sm text-gray-500">Add a theme, optional image and questions</p>
+                        </div>
+                    </div>
+
+                    <div class="text-right">
+            <span class="inline-flex items-center gap-2 text-xs bg-gray-100 px-3 py-1 rounded-full text-gray-600">
+              <i class="fa-regular fa-clock"></i>
+              Draft mode
+            </span>
+                    </div>
+                </header>
+
+                <form id="create-quiz-form" method="POST" action="/quizzes/create-multiple" enctype="multipart/form-data" class="mt-6 space-y-6">
+                    <!-- Theme + Image row -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
+                        <div class="sm:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Theme</label>
+                            <input
+                                    type="text"
+                                    name="theme"
+                                    placeholder="e.g., JavaScript, React..."
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                    required
+                                    aria-label="Quiz theme"
+                            >
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Image (optional)</label>
+                            <input
+                                    type="file"
+                                    name="quizImage"
+                                    accept="image/*"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                    aria-label="Quiz image"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Questions container -->
+                    <div id="questions-container" class="space-y-4">
+                        <div class="question-block bg-gray-50 border border-gray-200 p-4 rounded-lg shadow-sm" data-question="0">
+                            <div class="flex items-start justify-between gap-3">
+                                <div>
+                                    <h3 class="font-semibold text-gray-700 mb-2">Question 1</h3>
+                                    <textarea
+                                            name="questions[0][question]"
+                                            rows="2"
+                                            placeholder="Question..."
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                                            required
+                                    ></textarea>
+                                </div>
+
+                                <div class="flex-shrink-0 flex flex-col items-end gap-2">
+                                    <button type="button" class="remove-question-btn hidden text-xs text-red-600 bg-red-50 px-2 py-1 rounded">Remove</button>
+                                    <button type="button" class="toggle-question-details text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded">Toggle</button>
+                                </div>
+                            </div>
+
+                            <div class="mt-3 space-y-2 question-options">
+                                <% for (let i = 0; i < 4; i++) { %>
+                                    <div class="flex items-center gap-3">
+                                        <input type="checkbox" name="questions[0][correct]" value="<%= i %>" class="h-4 w-4" aria-label="Correct option <%= i+1 %>">
+                                        <input
+                                                type="text"
+                                                name="questions[0][option<%= i+1 %>]"
+                                                placeholder="Option <%= i+1 %>"
+                                                class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                                                required
+                                        >
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 border-t flex flex-col sm:flex-row gap-3 justify-between items-center">
+                        <div class="flex gap-3 w-full sm:w-auto">
+                            <button
+                                    type="button"
+                                    id="add-question"
+                                    class="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow transition"
+                            >
+                                <i class="fa-solid fa-plus"></i> Add Question
+                            </button>
+
+                            <button
+                                    type="button"
+                                    id="reset-questions"
+                                    class="inline-flex items-center gap-2 bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg hover:bg-yellow-200 transition"
+                                    title="Reset questions to first"
+                            >
+                                Reset
+                            </button>
+                        </div>
+
+                        <div class="w-full sm:w-auto">
+                            <button
+                                    type="submit"
+                                    class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow transition"
+                            >
+                                <i class="fa-solid fa-save"></i> Create Quiz
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Manage Questions -->
+            <aside class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                <header class="flex items-center justify-between gap-4 pb-4 border-b">
+                    <div class="flex items-center gap-3">
+            <span class="inline-flex items-center justify-center h-10 w-10 rounded-lg bg-blue-50 text-blue-600">
+              <i class="fa-solid fa-list"></i>
+            </span>
+                        <div>
+                            <h2 class="text-2xl font-semibold text-gray-800">Manage Questions</h2>
+                            <p class="text-sm text-gray-500">Browse, edit or remove existing questions</p>
+                        </div>
+                    </div>
+
+                    <div class="w-48">
+                        <input type="search" id="manage-search" placeholder="Search theme or text..." class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm">
+                    </div>
+                </header>
+
+                <div class="overflow-y-auto max-h-[600px] pr-2 space-y-3">
+                    <% let currentTheme = ''; %>
+                    <% questions.forEach(q => { %>
+                        <% if (currentTheme !== q.theme) { %>
+                            <% currentTheme = q.theme; %>
+                            <h3 class="font-bold text-md mt-4 mb-2 text-blue-600 border-b pb-1"><%= q.theme %></h3>
+                        <% } %>
+
+                        <div class="border border-gray-200 bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition question-item" data-theme="<%= q.theme %>">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="min-w-0">
+                                    <p class="font-medium text-gray-800 truncate"><%= q.question %></p>
+
+                                    <div class="text-sm text-gray-700 mt-2 ml-1 space-y-1">
+                                        <% q.options.forEach((opt, i) => { %>
+                                            <p class="<%= q.correctAnswer.includes(i) ? 'text-green-600 font-semibold' : 'text-gray-700' %>">
+                                                <span class="font-mono text-xs mr-2"><%= i + 1 %>.</span> <%= opt %>
+                                            </p>
+                                        <% }) %>
+                                    </div>
+                                </div>
+
+                                <div class="flex-shrink-0 flex flex-col items-end gap-2">
+                                    <a href="/admin/edit/<%= q.id %>" class="text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">Edit</a>
+
+                                    <form method="POST" action="/quizzes/delete/<%= q.id %>" class="inline">
+                                        <button
+                                                type="submit"
+                                                class="text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                                                onclick="return confirm('Delete this question?')"
+                                        >
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            </aside>
+        </div>
+    </div>
+</div>
+
+<script>
+    // scoped selectors - only affect create quiz form
+    (function() {
+        const container = document.getElementById('questions-container');
+        const addBtn = document.getElementById('add-question');
+        const resetBtn = document.getElementById('reset-questions');
+        const form = document.getElementById('create-quiz-form');
+
+        let questionCount = 1; // initial had 1 question (index 0)
+
+        function makeQuestionBlock(index) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'question-block bg-gray-50 border border-gray-200 p-4 rounded-lg shadow-sm';
+            wrapper.dataset.question = index;
+
+            wrapper.innerHTML = `
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <h3 class="font-semibold text-gray-700 mb-2">Question ${index + 1}</h3>
+            <textarea name="questions[${index}][question]" rows="2" placeholder="Question..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none" required></textarea>
+          </div>
+          <div class="flex-shrink-0 flex flex-col items-end gap-2">
+            <button type="button" class="remove-question-btn text-xs text-red-600 bg-red-50 px-2 py-1 rounded">Remove</button>
+            <button type="button" class="toggle-question-details text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded">Toggle</button>
+          </div>
+        </div>
+        <div class="mt-3 space-y-2 question-options">
+          ${[0,1,2,3].map(i => `
+            <div class="flex items-center gap-3">
+              <input type="checkbox" name="questions[${index}][correct]" value="${i}" class="h-4 w-4">
+              <input type="text" name="questions[${index}][option${i+1}]" placeholder="Option ${i+1}" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none" required>
+            </div>
+          `).join('')}
+        </div>
+      `;
+
+            // events for remove/toggle
+            wrapper.querySelector('.remove-question-btn').addEventListener('click', () => {
+                wrapper.remove();
+                // no renumbering of form names to keep backend simple; if necessary add renumber step here
+            });
+
+            wrapper.querySelector('.toggle-question-details').addEventListener('click', () => {
+                const opts = wrapper.querySelector('.question-options');
+                opts.classList.toggle('hidden');
+            });
+
+            return wrapper;
+        }
+
+        addBtn.addEventListener('click', () => {
+            const newBlock = makeQuestionBlock(questionCount);
+            container.appendChild(newBlock);
+            questionCount++;
+        });
+
+        resetBtn.addEventListener('click', () => {
+            // keep first question only (index 0)
+            const first = container.querySelector('.question-block[data-question="0"]');
+            container.innerHTML = '';
+            if (first) container.appendChild(first);
+            questionCount = 1;
+        });
+
+        // Scoped submit validation: every question must have at least one checked "correct"
+        form.addEventListener('submit', function(e) {
+            const questions = container.querySelectorAll('.question-block');
+            for (let i = 0; i < questions.length; i++) {
+                const idx = questions[i].dataset.question || i;
+                const checked = questions[i].querySelectorAll(`input[name="questions[${idx}][correct]"]:checked`);
+                if (checked.length === 0) {
+                    e.preventDefault();
+                    alert('⚠️ Please select at least one correct answer for Question ' + (i + 1));
+                    return false;
+                }
+            }
+        });
+
+        // small enhancement: make initial remove button visible for dynamically added blocks only
+        // (the first block keeps its remove hidden to avoid empty form)
+        // If you want the first block removable, remove the "hidden" class on its remove button server-side or here.
+    })();
+
+    // Manage Questions: simple client-side search (theme + question text)
+    (function() {
+        const search = document.getElementById('manage-search');
+        if (!search) return;
+        const items = Array.from(document.querySelectorAll('.question-item'));
+
+        search.addEventListener('input', () => {
+            const q = search.value.trim().toLowerCase();
+            items.forEach(it => {
+                const theme = it.dataset.theme?.toLowerCase() || '';
+                const text = it.querySelector('p')?.textContent?.toLowerCase() || '';
+                it.style.display = (theme.includes(q) || text.includes(q)) ? '' : 'none';
+            });
+        });
+    })();
+</script>
+
+<%- include('../partials/footer') %>

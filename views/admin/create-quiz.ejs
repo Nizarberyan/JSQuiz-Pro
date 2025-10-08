@@ -37,32 +37,32 @@
                             <label class="block text-sm font-medium text-gray-700">Options de réponse</label>
                             
                             <div class="flex items-center space-x-3">
-                                <input type="radio" name="questions[0][correct]" value="0" class="text-green-500" required>
+                                <input type="checkbox" name="questions[0][correct]" value="0" class="text-green-500 answer-input" data-question="0">
                                 <input type="text" name="questions[0][option1]" placeholder="Option 1" 
                                        class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
                             </div>
                             
                             <div class="flex items-center space-x-3">
-                                <input type="radio" name="questions[0][correct]" value="1" class="text-green-500">
+                                <input type="checkbox" name="questions[0][correct]" value="1" class="text-green-500 answer-input" data-question="0">
                                 <input type="text" name="questions[0][option2]" placeholder="Option 2" 
                                        class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
                             </div>
                             
                             <div class="flex items-center space-x-3">
-                                <input type="radio" name="questions[0][correct]" value="2" class="text-green-500">
+                                <input type="checkbox" name="questions[0][correct]" value="2" class="text-green-500 answer-input" data-question="0">
                                 <input type="text" name="questions[0][option3]" placeholder="Option 3" 
                                        class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
                             </div>
                             
                             <div class="flex items-center space-x-3">
-                                <input type="radio" name="questions[0][correct]" value="3" class="text-green-500">
+                                <input type="checkbox" name="questions[0][correct]" value="3" class="text-green-500 answer-input" data-question="0">
                                 <input type="text" name="questions[0][option4]" placeholder="Option 4" 
                                        class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
                             </div>
                         </div>
 
                         <div class="text-sm text-gray-600 mt-4">
-                            <p>💡 Sélectionnez le bouton radio à côté de la bonne réponse</p>
+                            <p>💡 Sélectionnez une ou plusieurs bonnes réponses</p>
                         </div>
                     </div>
                 </div>
@@ -113,32 +113,32 @@ document.getElementById('add-question').addEventListener('click', function() {
             <label class="block text-sm font-medium text-gray-700">Options de réponse</label>
             
             <div class="flex items-center space-x-3">
-                <input type="radio" name="questions[${questionCount}][correct]" value="0" class="text-green-500" required>
+                <input type="checkbox" name="questions[${questionCount}][correct]" value="0" class="text-green-500 answer-input" data-question="${questionCount}">
                 <input type="text" name="questions[${questionCount}][option1]" placeholder="Option 1" 
                        class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
             </div>
             
             <div class="flex items-center space-x-3">
-                <input type="radio" name="questions[${questionCount}][correct]" value="1" class="text-green-500">
+                <input type="checkbox" name="questions[${questionCount}][correct]" value="1" class="text-green-500 answer-input" data-question="${questionCount}">
                 <input type="text" name="questions[${questionCount}][option2]" placeholder="Option 2" 
                        class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
             </div>
             
             <div class="flex items-center space-x-3">
-                <input type="radio" name="questions[${questionCount}][correct]" value="2" class="text-green-500">
+                <input type="checkbox" name="questions[${questionCount}][correct]" value="2" class="text-green-500 answer-input" data-question="${questionCount}">
                 <input type="text" name="questions[${questionCount}][option3]" placeholder="Option 3" 
                        class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
             </div>
             
             <div class="flex items-center space-x-3">
-                <input type="radio" name="questions[${questionCount}][correct]" value="3" class="text-green-500">
+                <input type="checkbox" name="questions[${questionCount}][correct]" value="3" class="text-green-500 answer-input" data-question="${questionCount}">
                 <input type="text" name="questions[${questionCount}][option4]" placeholder="Option 4" 
                        class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
             </div>
         </div>
 
         <div class="text-sm text-gray-600 mt-4">
-            <p>💡 Sélectionnez le bouton radio à côté de la bonne réponse</p>
+            <p>💡 Sélectionnez une ou plusieurs bonnes réponses</p>
         </div>
     `;
     
@@ -173,6 +173,18 @@ function updateQuestionNumbers() {
         question.querySelector('h3').textContent = `Question ${index + 1}`;
     });
 }
+
+document.querySelector('form').addEventListener('submit', function(e) {
+    const questions = document.querySelectorAll('.question-block');
+    questions.forEach((block, index) => {
+        const checked = block.querySelectorAll('input[name="questions[' + index + '][correct]"]:checked');
+        if (checked.length === 0) {
+            e.preventDefault();
+            alert('Please select at least one correct answer for Question ' + (index + 1));
+            return false;
+        }
+    });
+});
 </script>
 
 <%- include('../partials/footer') %>

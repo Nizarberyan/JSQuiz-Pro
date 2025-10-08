@@ -1,6 +1,4 @@
-const { Score } = require("../../models");
-const { User } = require("../../models");
-const { Question } = require("../../models");
+const { Score, User, Question } = require("../../models");
 
 
 // function to calculate and save score
@@ -105,45 +103,45 @@ exports.calculateScore = async (req, res) => {
 
 exports.getMyScores = async (req, res) => {
     try {
-        // on récupère l'utilisateur depuis la session (ou token JWT si tu utilises auth)
         const userId = req.session.userId || req.user?.id;
 
         if (!userId) {
-            return res.status(401).json({
-                success: false,
-                message: "User not authenticated"
-            });
+            return res.redirect('/auth/login');
         }
 
-        // Vérifier que l'utilisateur existe
         const user = await User.findByPk(userId);
         if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: "User not found"
-            });
+            return res.redirect('/auth/login');
         }
 
-        // Récupérer les scores de l'utilisateur avec Sequelize
         const scores = await Score.findAll({
             where: { user_id: userId },
-            attributes: ["score", "theme", "played_at"], // colonnes à renvoyer
-            order: [["played_at", "DESC"]] // plus récent d'abord
+            order: [["played_at", "DESC"]]
         });
 
-        res.json({
-            success: true,
-            message: "Scores fetched successfully",
-            count: scores.length,
-            data: scores
+        const scoresWithDetails = await Promise.all(
+            scores.map(async (score) => {
+                const totalQuestions = await Question.count({ where: { theme: score.theme } });
+                const percentage = totalQuestions > 0 ? ((score.score / totalQuestions) * 100).toFixed(2) : 0;
+                return {
+                    theme: score.theme,
+                    score: score.score,
+                    total: totalQuestions,
+                    percentage,
+                    played_at: score.played_at
+                };
+            })
+        );
+
+        res.render('user/history', {
+            scores: scoresWithDetails,
+            userId: req.session.userId,
+            userRole: req.session.userRole
         });
 
     } catch (err) {
         console.error("Error fetching scores:", err);
-        res.status(500).json({
-            success: false,
-            message: "Failed to fetch scores"
-        });
+        res.status(500).send('Error loading history');
     }
 };
 

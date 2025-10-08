@@ -60,7 +60,7 @@ exports.getUserDashboard = async (req, res) => {
     const topPlayers = await Score.findAll({
       attributes: [
         "user_id",
-        [Sequelize.fn("AVG", Sequelize.col("score")), "avg_raw_score"]
+        [Sequelize.fn("AVG", Sequelize.col("score")), "avg_score"]
       ],
       include: [{
         model: User,
@@ -68,33 +68,14 @@ exports.getUserDashboard = async (req, res) => {
         attributes: ["name"]
       }],
       group: ["user_id", "user.id", "user.name"],
+      order: [[Sequelize.fn("AVG", Sequelize.col("score")), "DESC"]],
       raw: false
     });
 
-    // Convertir le score brut en %
-    const topPlayersWithPercent = await Promise.all(
-      topPlayers.map(async (p) => {
-        // On prend le premier thème du joueur pour estimer les questions
-        const firstTheme = await Score.findOne({
-          where: { user_id: p.user_id },
-          attributes: ["theme"],
-          raw: true
-        });
-
-        const totalQuestions = firstTheme
-          ? await Question.count({ where: { theme: firstTheme.theme } })
-          : 1;
-
-        const avg_percent = totalQuestions > 0
-          ? (Number(p.dataValues.avg_raw_score) / totalQuestions) * 100
-          : 0;
-
-        return {
-          User: { name: p.user?.name || "Unknown" },
-          avg_score: avg_percent.toFixed(2)
-        };
-      })
-    );
+    const topPlayersWithPercent = topPlayers.map(p => ({
+      User: { name: p.user?.name || "Unknown" },
+      avg_score: Number(p.dataValues.avg_score).toFixed(2)
+    }));
 
     // Badge
     let badge = "Débutant";
