@@ -22,11 +22,19 @@ const register = async (req, res) => {
     req.session.userId = user.id;
     req.session.userRole = user.role;
 
-    res.redirect("/");
+if (user.role === "user") {
+   res.redirect("/dashboard"); 
+} else {
+   res.redirect("/");
+}
+
+
+
   } catch (error) {
     console.error(error);
     res.render("auth/register", { error: "Erreur serveur" });
   }
+  
 };
 
 const showLogin = (req, res) =>

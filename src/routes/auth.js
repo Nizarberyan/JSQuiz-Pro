@@ -17,4 +17,5 @@ router.get("/register", authController.showRegister);
 router.get("/logout", authController.logout);
 router.post("/logout", authController.logout);
 
+
 module.exports = router;
