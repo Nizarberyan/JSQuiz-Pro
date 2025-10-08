@@ -1,8 +1,8 @@
 {
   "development": {
-    "username": "root",
-    "password": "",
-    "database": "jsquiz_pro",
+    "username": "my_user",
+    "password": "my_password",
+    "database": "my_database",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
